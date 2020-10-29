@@ -38,15 +38,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        sceneView.scene.rootNode.addChildNode(node)
         sceneView.autoenablesDefaultLighting = true
         
-//        // Create a new scene
-//        let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
-//
-//        if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
-//
-//        diceNode.position = SCNVector3(0, 0, -0.1)
-//
-//        sceneView.scene.rootNode.addChildNode(diceNode)
-//        }
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,10 +66,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             
             let results = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
             
-            if !results.isEmpty {
-                print("touched the plane")
-            } else {
-                print("touched somewhere else")
+            if let hitResult = results.first {
+                // Create a new scene
+                let diceScene = SCNScene(named: "art.scnassets/diceCollada.scn")!
+        
+                if let diceNode = diceScene.rootNode.childNode(withName: "Dice", recursively: true) {
+        
+                    diceNode.position = SCNVector3(hitResult.worldTransform.columns.3.x,
+                                                   hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
+                                                   hitResult.worldTransform.columns.3.z)
+            
+                    sceneView.scene.rootNode.addChildNode(diceNode)
+                }
             }
         }
     }
